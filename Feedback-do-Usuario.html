@@ -14,7 +14,20 @@
     <script type="module">
         import { salvarFeedbackNoFirestore } from './firestore.js';
         
-        // A função para enviar feedback permanece aqui
+        // Função para exibir notificações
+        function exibirNotificacao(mensagem, tipo) {
+            const notificacao = document.getElementById("notification");
+            notificacao.innerText = mensagem;
+            notificacao.className = `notification ${tipo}`;
+            notificacao.style.display = "block";
+
+            // Oculta a notificação após 5 segundos
+            setTimeout(() => {
+                notificacao.style.display = "none";
+            }, 5000);
+        }
+
+        // A função para enviar feedback
         window.enviarFeedback = async function(event) {
             event.preventDefault(); // Impede o envio padrão do formulário
 
