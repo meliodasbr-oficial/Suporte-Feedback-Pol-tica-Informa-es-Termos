@@ -63,7 +63,7 @@
                     feedbacks.push({ nome, email, mensagem, avaliacao, data: dataEnvio.toISOString(), app: feedbackData.app });
                     localStorage.setItem("feedbacks", JSON.stringify(feedbacks));
                     // Redireciona para a página de feedbacks
-                    window.location.href = "feedbacks.html";
+                    window.location.href = "https://meliodasbr-oficial.github.io/Suporte-Feedback-Pol-tica-Informa-es-Termos/Feedback";
                 }, function(error) {
                     console.error("Erro ao enviar feedback:", error);
                 });
