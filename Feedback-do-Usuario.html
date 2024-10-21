@@ -2,7 +2,6 @@
 <html lang="pt-br">
 
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style2.css">
@@ -47,7 +46,8 @@
         const app = firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore(app);
 
-        (function() {
+        // Inicializa o EmailJS
+        (function () {
             emailjs.init("dDWLYAbLMPlBXA9Dp"); // Substitua pela sua Public Key
         })();
 
@@ -107,11 +107,9 @@
             }
         }
     </script>
-
 </head>
 
 <body>
-
     <div class="container">
         <h1>Feedback do Usuário</h1>
 
@@ -157,7 +155,6 @@
     <footer>
         <p>&copy; 2024 Calculadora de Faltas. Todos os direitos reservados.</p>
     </footer>
-
 </body>
 
 </html>
