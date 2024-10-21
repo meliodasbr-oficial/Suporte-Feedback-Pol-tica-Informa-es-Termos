@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style2.css">
@@ -8,6 +10,7 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script type="text/javascript" src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js"></script>
     <script type="text/javascript" src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js"></script>
+
     <style>
         /* Estilos para a notificação */
         .notification {
@@ -22,11 +25,12 @@
             z-index: 1000;
             transition: opacity 0.5s ease;
         }
-        
+
         .notification.error {
             background-color: #f44336; /* Vermelho para erro */
         }
     </style>
+
     <script type="text/javascript">
         // Configuração do Firebase
         const firebaseConfig = {
@@ -43,22 +47,9 @@
         const app = firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore(app);
 
-        (function(){
+        (function() {
             emailjs.init("dDWLYAbLMPlBXA9Dp"); // Substitua pela sua Public Key
         })();
-
-        // Lista de palavrões (insensível a maiúsculas e minúsculas)
-        const palavroes = ["cu", "puta", "piranha", "fuder", "fude"];
-
-        // Função para verificar se a mensagem contém palavrões
-        function contémPalavrão(mensagem) {
-            for (let palavra of palavroes) {
-                if (mensagem.toLowerCase().includes(palavra)) {
-                    return palavra; // Retorna a palavra ofensiva encontrada
-                }
-            }
-            return null; // Retorna null se não encontrar nenhuma palavra
-        }
 
         // Função para exibir notificação
         function exibirNotificacao(mensagem, tipo) {
@@ -66,7 +57,7 @@
             notification.textContent = mensagem;
             notification.className = `notification ${tipo}`;
             notification.style.display = "block";
-            
+
             // Esconde a notificação após 5 segundos
             setTimeout(() => {
                 notification.style.display = "none";
@@ -84,13 +75,6 @@
             const avaliacao = document.getElementById("avaliacao").value;
             const appSelecionado = document.querySelector('input[name="app"]:checked').value; // Captura o aplicativo selecionado
             const dataEnvio = new Date(); // Captura a data e hora atual
-
-            // Verifica se a mensagem contém palavrões
-            const palavraOfensiva = contémPalavrão(mensagem);
-            if (palavraOfensiva) {
-                alert(`A sua mensagem contém a palavra inapropriada: "${palavraOfensiva}". Por favor, remova essa palavra antes de enviar.`);
-                return; // Impede o envio do feedback
-            }
 
             // Cria um objeto de feedback
             const feedbackData = {
@@ -123,18 +107,21 @@
             }
         }
     </script>
+
 </head>
+
 <body>
+
     <div class="container">
         <h1>Feedback do Usuário</h1>
-        
+
         <form onsubmit="enviarFeedback(event)">
             <label for="nome">Nome (obrigatório):</label><br>
             <input type="text" id="nome" name="nome" required><br><br>
-            
+
             <label for="email">E-mail (obrigatório):</label><br>
             <input type="email" id="email" name="email" required><br><br>
-            
+
             <label for="mensagem">Sua mensagem (obrigatório):</label><br>
             <textarea id="mensagem" name="mensagem" rows="5" cols="30" required></textarea><br><br>
 
@@ -170,5 +157,7 @@
     <footer>
         <p>&copy; 2024 Calculadora de Faltas. Todos os direitos reservados.</p>
     </footer>
+
 </body>
+
 </html>
