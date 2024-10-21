@@ -11,46 +11,11 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     
     <!-- Importando Firebase como módulo -->
-    <script type="module" src="firestore.js"></script>
-
-    <style>
-        /* Estilos para a notificação */
-        .notification {
-            display: none; /* Inicialmente escondido */
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background-color: #4CAF50; /* Verde para sucesso */
-            color: white;
-            padding: 15px;
-            border-radius: 5px;
-            z-index: 1000;
-            transition: opacity 0.5s ease;
-        }
+    <script type="module">
+        import { salvarFeedbackNoFirestore } from './firestore.js';
         
-        .notification.error {
-            background-color: #f44336; /* Vermelho para erro */
-        }
-    </style>
-
-    <script type="text/javascript" src="emailjs.js"></script>
-
-    <script type="text/javascript">
-        // Função para exibir notificação
-        function exibirNotificacao(mensagem, tipo) {
-            const notification = document.getElementById("notification");
-            notification.textContent = mensagem;
-            notification.className = `notification ${tipo}`;
-            notification.style.display = "block";
-            
-            // Esconde a notificação após 5 segundos
-            setTimeout(() => {
-                notification.style.display = "none";
-            }, 5000);
-        }
-
-        // Função para enviar feedback
-        async function enviarFeedback(event) {
+        // A função para enviar feedback permanece aqui
+        window.enviarFeedback = async function(event) {
             event.preventDefault(); // Impede o envio padrão do formulário
 
             // Captura os valores do formulário
@@ -93,6 +58,28 @@
             }
         }
     </script>
+
+    <style>
+        /* Estilos para a notificação */
+        .notification {
+            display: none; /* Inicialmente escondido */
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #4CAF50; /* Verde para sucesso */
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            z-index: 1000;
+            transition: opacity 0.5s ease;
+        }
+        
+        .notification.error {
+            background-color: #f44336; /* Vermelho para erro */
+        }
+    </style>
+
+    <script type="text/javascript" src="emailjs.js"></script>
 </head>
 
 <body>
