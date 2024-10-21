@@ -5,14 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style3.css">
     <title>Feedbacks dos Usuários</title>
-    <script>
+
+    <script type="module">
+        // Importa os SDKs do Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+        // Configuração do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDZGH-M9RjVQ_0iXX15hHqAX36Cpjvu3hQ",
+            authDomain: "feedbacks-d5981.firebaseapp.com",
+            projectId: "feedbacks-d5981",
+            storageBucket: "feedbacks-d5981.appspot.com",
+            messagingSenderId: "450937754382",
+            appId: "1:450937754382:web:45906d32467ddd462f7d5f",
+            measurementId: "G-CQSJ0T3FXD"
+        };
+
+        // Inicializa o Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
         // Lista de palavrões (exemplo)
-        const palavroes = ["cu", "puta", "piranha"]; // Substitua por palavrões reais
+        const palavroes = ["cu", "puta", "piranha"];
 
         // Função para censurar palavrões
         function censurarTexto(texto) {
             palavroes.forEach(palavra => {
-                const regex = new RegExp(`(${palavra})`, 'gi'); // 'gi' para substituir de forma global e sem diferenciar maiúsculas de minúsculas
+                const regex = new RegExp(`(${palavra})`, 'gi');
                 texto = texto.replace(regex, match => '*'.repeat(match.length));
             });
             return texto;
@@ -24,12 +44,16 @@
             return new Intl.DateTimeFormat('pt-BR', options).format(data);
         }
 
-        // Função para exibir feedbacks
-        function exibirFeedbacks() {
+        // Função para exibir feedbacks do Firestore
+        async function exibirFeedbacks() {
             const feedbackList = document.getElementById('feedback-list');
-            const feedbacks = JSON.parse(localStorage.getItem("feedbacks")) || [];
+            feedbackList.innerHTML = ''; // Limpa a lista antes de exibir os feedbacks
 
-            feedbacks.forEach(feedback => {
+            // Consulta a coleção "feedbacks" no Firestore
+            const feedbackSnapshot = await getDocs(collection(db, "feedbacks"));
+            feedbackSnapshot.forEach((doc) => {
+                const feedback = doc.data();
+
                 const feedbackDiv = document.createElement('div');
                 feedbackDiv.classList.add('feedback');
 
@@ -42,12 +66,12 @@
                     console.error("Data inválida:", feedback.data);
                     return; // Ignora feedbacks com data inválida
                 }
-                
+
                 // Formata a data e hora
                 const dataHoraFormatada = formatarDataHora(dataHora);
 
                 // Define a cor da bolinha de acordo com o aplicativo
-                const corBolinha = feedback.app === "Calculadora de Faltas" ? "#4CAF50" : "#2196F3"; // Verde para "Calculadora de Faltas" e Azul para outro
+                const corBolinha = feedback.app === "Calculadora de Faltas" ? "#4CAF50" : "#2196F3";
 
                 feedbackDiv.innerHTML = `
                     <strong>${feedback.nome}</strong> <small>(${dataHoraFormatada})</small><br>
