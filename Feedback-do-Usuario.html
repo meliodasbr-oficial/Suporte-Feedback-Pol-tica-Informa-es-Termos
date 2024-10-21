@@ -48,7 +48,9 @@
 
         // Inicializa o EmailJS
         (function () {
-            emailjs.init("dDWLYAbLMPlBXA9Dp"); // Substitua pela sua Public Key
+            emailjs.init({
+                publicKey: "dDWLYAbLMPlBXA9Dp" // Substitua pela sua Public Key
+            });
         })();
 
         // Função para exibir notificação
