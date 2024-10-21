@@ -1,30 +1,24 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style2.css">
     <title>Feedback do Usuário</title>
-    
+
     <!-- Importando o EmailJS -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-    
+
     <!-- Importando Firebase como módulo -->
     <script type="module">
         import { salvarFeedbackNoFirestore } from './firestore.js';
-        
+
         // Função para exibir notificações
         function exibirNotificacao(mensagem, tipo) {
             const notificacao = document.getElementById("notification");
             notificacao.innerText = mensagem;
             notificacao.className = `notification ${tipo}`;
             notificacao.style.display = "block";
-
-            // Oculta a notificação após 5 segundos
-            setTimeout(() => {
-                notificacao.style.display = "none";
-            }, 5000);
         }
 
         // A função para enviar feedback
@@ -60,8 +54,16 @@
                     // Exibe notificação de sucesso
                     exibirNotificacao("Feedback enviado com sucesso!", "success");
 
-                    // Redireciona para a página de feedbacks
-                    window.location.href = "feedbacks.html";
+                    // Redireciona após 3 segundos
+                    setTimeout(() => {
+                        window.location.href = "https://meliodasbr-oficial.github.io/Suporte-Feedback-Pol-tica-Informa-es-Termos/Feedback";
+                    }, 3000); // 3000 milissegundos = 3 segundos
+
+                    // Oculta a notificação após 5 segundos
+                    setTimeout(() => {
+                        const notificacao = document.getElementById("notification");
+                        notificacao.style.display = "none";
+                    }, 5000); // 5000 milissegundos = 5 segundos
                 } else {
                     exibirNotificacao("Erro ao salvar feedback. Tente novamente.", "error");
                 }
@@ -86,7 +88,7 @@
             z-index: 1000;
             transition: opacity 0.5s ease;
         }
-        
+
         .notification.error {
             background-color: #f44336; /* Vermelho para erro */
         }
@@ -94,18 +96,17 @@
 
     <script type="text/javascript" src="emailjs.js"></script>
 </head>
-
 <body>
     <div class="container">
         <h1>Feedback do Usuário</h1>
-        
+
         <form onsubmit="enviarFeedback(event)">
             <label for="nome">Nome (obrigatório):</label><br>
             <input type="text" id="nome" name="nome" required><br><br>
-            
+
             <label for="email">E-mail (obrigatório):</label><br>
             <input type="email" id="email" name="email" required><br><br>
-            
+
             <label for="mensagem">Sua mensagem (obrigatório):</label><br>
             <textarea id="mensagem" name="mensagem" rows="5" cols="30" required></textarea><br><br>
 
@@ -142,5 +143,4 @@
         <p>&copy; 2024 Calculadora de Faltas. Todos os direitos reservados.</p>
     </footer>
 </body>
-
 </html>
