@@ -27,26 +27,50 @@
         // Função para enviar feedback
         async function enviarFeedback() {
             const nome = document.getElementById('nome').value;
+            const email = document.getElementById('email').value;
             const mensagem = document.getElementById('mensagem').value;
             const avaliacao = document.getElementById('avaliacao').value;
             const app = document.getElementById('app').value;
             const data = new Date();
 
             try {
-                // Adiciona o feedback ao Firestore
+                // Envia o feedback para o Firestore
                 await addDoc(collection(db, "feedbacks"), {
                     nome: nome,
+                    email: email,
                     mensagem: mensagem,
                     avaliacao: parseInt(avaliacao),
                     app: app,
                     data: data.toISOString()
                 });
-                alert("Feedback enviado com sucesso!");
+
+                // Configuração do EmailJS para enviar o feedback para o seu email
+                emailjs.send("service_1s24rqp", "template_msnrwnl", {
+                    nome: nome,
+                    email: email,
+                    mensagem: mensagem,
+                    avaliacao: avaliacao,
+                    app: app,
+                    data: data.toISOString()
+                }).then((response) => {
+                    alert("Feedback enviado com sucesso e armazenado!");
+                }, (error) => {
+                    console.error("Erro ao enviar email:", error);
+                    alert("Erro ao enviar o feedback. Por favor, tente novamente.");
+                });
+
             } catch (e) {
                 console.error("Erro ao enviar feedback: ", e);
                 alert("Erro ao enviar feedback. Tente novamente.");
             }
         }
+    </script>
+    <!-- Adiciona o SDK do EmailJS -->
+    <script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            emailjs.init("dDWLYAbLMPlBXA9Dp"); // Substitua pelo seu USER ID do EmailJS
+        })();
     </script>
 </head>
 <body>
@@ -54,6 +78,9 @@
         <h1>Enviar Feedback</h1>
         <label for="nome">Nome:</label><br>
         <input type="text" id="nome" name="nome"><br><br>
+
+        <label for="email">Email:</label><br>
+        <input type="email" id="email" name="email"><br><br>
 
         <label for="mensagem">Mensagem:</label><br>
         <textarea id="mensagem" name="mensagem"></textarea><br><br>
