@@ -1,13 +1,40 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style2.css">
     <title>Feedback do Usuário</title>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-analytics.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+        
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDZGH-M9RjVQ_0iXX15hHqAX36Cpjvu3hQ",
+            authDomain: "feedbacks-d5981.firebaseapp.com",
+            projectId: "feedbacks-d5981",
+            storageBucket: "feedbacks-d5981.appspot.com",
+            messagingSenderId: "450937754382",
+            appId: "1:450937754382:web:45906d32467ddd462f7d5f",
+            measurementId: "G-CQSJ0T3FXD"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const db = getFirestore(app); // Initialize Firestore
+    </script>
+
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
     <script type="text/javascript">
-        (function(){
+        (function () {
             emailjs.init("dDWLYAbLMPlBXA9Dp"); // Substitua pela sua Public Key
         })();
 
@@ -24,8 +51,8 @@
             return null; // Retorna null se não encontrar nenhuma palavra
         }
 
-        // Função para enviar feedback
-        function enviarFeedback(event) {
+        // Função para enviar feedback para o Firestore
+        async function enviarFeedback(event) {
             event.preventDefault(); // Impede o envio padrão do formulário
 
             // Captura os valores do formulário
@@ -43,44 +70,40 @@
                 return; // Impede o envio do feedback
             }
 
-            // Cria um objeto de feedback
-            const feedbackData = {
-                to_name: "Suporte",
-                from_name: nome,
-                email: email,
-                message: mensagem,
-                avaliacao: avaliacao,
-                data: dataEnvio.toISOString(), // Converte para formato ISO
-                app: appSelecionado // Nome do aplicativo selecionado
-            };
-
-            // Envia o feedback para o EmailJS
-            emailjs.send('service_1s24rqp', 'template_5wqwjdp', feedbackData)
-                .then(function(response) {
-                    console.log("Feedback enviado com sucesso!", response.status, response.text);
-                    // Armazena o feedback no localStorage
-                    let feedbacks = JSON.parse(localStorage.getItem("feedbacks")) || [];
-                    feedbacks.push({ nome, email, mensagem, avaliacao, data: dataEnvio.toISOString(), app: feedbackData.app });
-                    localStorage.setItem("feedbacks", JSON.stringify(feedbacks));
-                    // Redireciona para a página de feedbacks
-                    window.location.href = "https://meliodasbr-oficial.github.io/Suporte-Feedback-Pol-tica-Informa-es-Termos/Feedback";
-                }, function(error) {
-                    console.error("Erro ao enviar feedback:", error);
+            // Criar um novo documento no Firestore
+            try {
+                const docRef = await addDoc(collection(db, "feedbacks"), {
+                    nome: nome,
+                    email: email,
+                    mensagem: mensagem,
+                    avaliacao: avaliacao,
+                    app: appSelecionado,
+                    data: dataEnvio
                 });
+                console.log("Feedback enviado com sucesso!", docRef.id);
+                alert("Feedback enviado com sucesso!");
+
+                // Redireciona para a página de feedbacks
+                window.location.href = "https://meliodasbr-oficial.github.io/Suporte-Feedback-Pol-tica-Informa-es-Termos/Feedback";
+            } catch (error) {
+                console.error("Erro ao enviar feedback:", error);
+                alert("Erro ao enviar feedback. Tente novamente.");
+            }
         }
     </script>
 </head>
+
 <body>
     <div class="container">
         <h1>Feedback do Usuário</h1>
-        
+
         <form onsubmit="enviarFeedback(event)">
             <label for="nome">Nome (obrigatório):</label><br>
             <input type="text" id="nome" name="nome" required><br><br>
-            
+
             <label for="email">E-mail (obrigatório):</label><br>
             <input type="email" id="email" name="email" required><br><br>
-            
+
             <label for="mensagem">Sua mensagem (obrigatório):</label><br>
             <textarea id="mensagem" name="mensagem" rows="5" cols="30" required></textarea><br><br>
 
@@ -114,4 +137,5 @@
         <p>&copy; 2024 Calculadora de Faltas. Todos os direitos reservados.</p>
     </footer>
 </body>
+
 </html>
