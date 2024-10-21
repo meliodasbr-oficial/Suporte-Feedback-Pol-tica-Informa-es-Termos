@@ -6,9 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style2.css">
     <title>Feedback do Usuário</title>
+    
+    <!-- Importando o EmailJS -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-    <script type="text/javascript" src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js"></script>
-    <script type="text/javascript" src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js"></script>
+    
+    <!-- Importando Firebase como módulo -->
+    <script type="module" src="firestore.js"></script>
 
     <style>
         /* Estilos para a notificação */
@@ -24,42 +27,22 @@
             z-index: 1000;
             transition: opacity 0.5s ease;
         }
-
+        
         .notification.error {
             background-color: #f44336; /* Vermelho para erro */
         }
     </style>
 
+    <script type="text/javascript" src="emailjs.js"></script>
+
     <script type="text/javascript">
-        // Configuração do Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyDZGH-M9RjVQ_0iXX15hHqAX36Cpjvu3hQ",
-            authDomain: "feedbacks-d5981.firebaseapp.com",
-            projectId: "feedbacks-d5981",
-            storageBucket: "feedbacks-d5981.appspot.com",
-            messagingSenderId: "450937754382",
-            appId: "1:450937754382:web:45906d32467ddd462f7d5f",
-            measurementId: "G-CQSJ0T3FXD"
-        };
-
-        // Inicializa o Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore(app);
-
-        // Inicializa o EmailJS
-        (function () {
-            emailjs.init({
-                publicKey: "dDWLYAbLMPlBXA9Dp" // Substitua pela sua Public Key
-            });
-        })();
-
         // Função para exibir notificação
         function exibirNotificacao(mensagem, tipo) {
             const notification = document.getElementById("notification");
             notification.textContent = mensagem;
             notification.className = `notification ${tipo}`;
             notification.style.display = "block";
-
+            
             // Esconde a notificação após 5 segundos
             setTimeout(() => {
                 notification.style.display = "none";
@@ -88,22 +71,23 @@
                 app: appSelecionado // Nome do aplicativo selecionado
             };
 
-            try {
-                // Envia o feedback para o EmailJS
-                await emailjs.send('service_1s24rqp', 'template_5wqwjdp', feedbackData);
-                console.log("Feedback enviado com sucesso!");
+            // Envia o feedback via EmailJS
+            const emailEnviado = await enviarEmail(feedbackData);
 
-                // Adiciona o feedback ao Firestore
-                await db.collection("feedbacks").add(feedbackData);
-                console.log("Feedback salvo no Firestore!");
+            if (emailEnviado) {
+                // Salva o feedback no Firestore
+                const feedbackSalvo = await salvarFeedbackNoFirestore(feedbackData);
+                
+                if (feedbackSalvo) {
+                    // Exibe notificação de sucesso
+                    exibirNotificacao("Feedback enviado com sucesso!", "success");
 
-                // Exibe notificação de sucesso
-                exibirNotificacao("Feedback enviado com sucesso!", "success");
-
-                // Redireciona para a página de feedbacks
-                window.location.href = "feedbacks.html";
-            } catch (error) {
-                console.error("Erro ao enviar feedback:", error);
+                    // Redireciona para a página de feedbacks
+                    window.location.href = "feedbacks.html";
+                } else {
+                    exibirNotificacao("Erro ao salvar feedback. Tente novamente.", "error");
+                }
+            } else {
                 // Exibe notificação de erro
                 exibirNotificacao("Erro ao enviar feedback. Verifique a conexão com a internet ou o servidor.", "error");
             }
@@ -114,14 +98,14 @@
 <body>
     <div class="container">
         <h1>Feedback do Usuário</h1>
-
+        
         <form onsubmit="enviarFeedback(event)">
             <label for="nome">Nome (obrigatório):</label><br>
             <input type="text" id="nome" name="nome" required><br><br>
-
+            
             <label for="email">E-mail (obrigatório):</label><br>
             <input type="email" id="email" name="email" required><br><br>
-
+            
             <label for="mensagem">Sua mensagem (obrigatório):</label><br>
             <textarea id="mensagem" name="mensagem" rows="5" cols="30" required></textarea><br><br>
 
