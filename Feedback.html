@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style3.css">
+    <title>Feedbacks dos Usuários</title>
+    <script>
+        // Lista de palavrões (exemplo)
+        const palavroes = ["cu", "puta", "piranha"]; // Substitua por palavrões reais
+
+        // Função para censurar palavrões
+        function censurarTexto(texto) {
+            palavroes.forEach(palavra => {
+                const regex = new RegExp(`(${palavra})`, 'gi'); // 'gi' para substituir de forma global e sem diferenciar maiúsculas de minúsculas
+                texto = texto.replace(regex, match => '*'.repeat(match.length));
+            });
+            return texto;
+        }
+
+        // Função para formatar a data e hora
+        function formatarDataHora(data) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false };
+            return new Intl.DateTimeFormat('pt-BR', options).format(data);
+        }
+
+        // Função para exibir feedbacks
+        function exibirFeedbacks() {
+            const feedbackList = document.getElementById('feedback-list');
+            const feedbacks = JSON.parse(localStorage.getItem("feedbacks")) || [];
+
+            feedbacks.forEach(feedback => {
+                const feedbackDiv = document.createElement('div');
+                feedbackDiv.classList.add('feedback');
+
+                // Censura a mensagem do feedback
+                const mensagemCensurada = censurarTexto(feedback.mensagem);
+
+                // Verifica se a data é válida
+                const dataHora = new Date(feedback.data);
+                if (isNaN(dataHora)) {
+                    console.error("Data inválida:", feedback.data);
+                    return; // Ignora feedbacks com data inválida
+                }
+                
+                // Formata a data e hora
+                const dataHoraFormatada = formatarDataHora(dataHora);
+
+                // Define a cor da bolinha de acordo com o aplicativo
+                const corBolinha = feedback.app === "Calculadora de Faltas" ? "#4CAF50" : "#2196F3"; // Verde para "Calculadora de Faltas" e Azul para outro
+
+                feedbackDiv.innerHTML = `
+                    <strong>${feedback.nome}</strong> <small>(${dataHoraFormatada})</small><br>
+                    <p>${mensagemCensurada}</p>
+                    <div class="estrelas">${'⭐'.repeat(feedback.avaliacao)}${'☆'.repeat(5 - feedback.avaliacao)}</div>
+                    <p><span style="display: inline-block; width: 15px; height: 15px; border-radius: 50%; background-color: ${corBolinha};"></span> <em>Aplicativo: ${feedback.app}</em></p>
+                `;
+
+                feedbackList.appendChild(feedbackDiv);
+            });
+        }
+
+        // Chama a função para exibir os feedbacks ao carregar a página
+        window.onload = exibirFeedbacks;
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Feedbacks dos Usuários</h1>
+        
+        <div id="feedback-list"></div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Calculadora de Faltas. Todos os direitos reservados.</p>
+    </footer>
+</body>
+</html>

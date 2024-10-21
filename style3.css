@@ -1,0 +1,35 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh; /* Ocupa toda a altura da tela */
+    background-color: #f8f8f8; /* Cor de fundo */
+}
+
+.container {
+    text-align: center; /* Centraliza o texto */
+    background-color: #fff; /* Cor de fundo do container */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Sombra ao redor do container */
+    width: 400px; /* Largura do container */
+}
+
+.feedback {
+    border-bottom: 1px solid #ccc; /* Linha entre feedbacks */
+    padding: 10px 0; /* Espaçamento interno */
+}
+
+.estrelas {
+    font-size: 20px; /* Tamanho das estrelas */
+    color: gold; /* Cor das estrelas */
+}
+
+footer {
+    margin-top: 20px;
+    text-align: center; /* Centraliza o texto do rodapé */
+}

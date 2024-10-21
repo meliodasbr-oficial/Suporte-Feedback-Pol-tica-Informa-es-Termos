@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style2.css">
+    <title>Feedback do Usuário</title>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function(){
+            emailjs.init("dDWLYAbLMPlBXA9Dp"); // Substitua pela sua Public Key
+        })();
+
+        // Lista de palavrões (insensível a maiúsculas e minúsculas)
+        const palavroes = ["cu", "puta", "piranha", "fuder", "fude"];
+
+        // Função para verificar se a mensagem contém palavrões
+        function contémPalavrão(mensagem) {
+            for (let palavra of palavroes) {
+                if (mensagem.toLowerCase().includes(palavra)) {
+                    return palavra; // Retorna a palavra ofensiva encontrada
+                }
+            }
+            return null; // Retorna null se não encontrar nenhuma palavra
+        }
+
+        // Função para enviar feedback
+        function enviarFeedback(event) {
+            event.preventDefault(); // Impede o envio padrão do formulário
+
+            // Captura os valores do formulário
+            const nome = document.getElementById("nome").value || "Anônimo";
+            const email = document.getElementById("email").value; // Captura o e-mail
+            const mensagem = document.getElementById("mensagem").value;
+            const avaliacao = document.getElementById("avaliacao").value;
+            const appSelecionado = document.querySelector('input[name="app"]:checked').value; // Captura o aplicativo selecionado
+            const dataEnvio = new Date(); // Captura a data e hora atual
+
+            // Verifica se a mensagem contém palavrões
+            const palavraOfensiva = contémPalavrão(mensagem);
+            if (palavraOfensiva) {
+                alert(`A sua mensagem contém a palavra inapropriada: "${palavraOfensiva}". Por favor, remova essa palavra antes de enviar.`);
+                return; // Impede o envio do feedback
+            }
+
+            // Cria um objeto de feedback
+            const feedbackData = {
+                to_name: "Suporte",
+                from_name: nome,
+                email: email,
+                message: mensagem,
+                avaliacao: avaliacao,
+                data: dataEnvio.toISOString(), // Converte para formato ISO
+                app: appSelecionado // Nome do aplicativo selecionado
+            };
+
+            // Envia o feedback para o EmailJS
+            emailjs.send('service_1s24rqp', 'template_5wqwjdp', feedbackData)
+                .then(function(response) {
+                    console.log("Feedback enviado com sucesso!", response.status, response.text);
+                    // Armazena o feedback no localStorage
+                    let feedbacks = JSON.parse(localStorage.getItem("feedbacks")) || [];
+                    feedbacks.push({ nome, email, mensagem, avaliacao, data: dataEnvio.toISOString(), app: feedbackData.app });
+                    localStorage.setItem("feedbacks", JSON.stringify(feedbacks));
+                    // Redireciona para a página de feedbacks
+                    window.location.href = "feedbacks.html";
+                }, function(error) {
+                    console.error("Erro ao enviar feedback:", error);
+                });
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Feedback do Usuário</h1>
+        
+        <form onsubmit="enviarFeedback(event)">
+            <label for="nome">Nome (obrigatório):</label><br>
+            <input type="text" id="nome" name="nome" required><br><br>
+            
+            <label for="email">E-mail (obrigatório):</label><br>
+            <input type="email" id="email" name="email" required><br><br>
+            
+            <label for="mensagem">Sua mensagem (obrigatório):</label><br>
+            <textarea id="mensagem" name="mensagem" rows="5" cols="30" required></textarea><br><br>
+
+            <label>Avaliação do aplicativo:</label><br>
+            <select name="avaliacao" id="avaliacao" required>
+                <option value="">Selecione uma avaliação</option>
+                <option value="1">1 - Muito ruim</option>
+                <option value="2">2 - Ruim</option>
+                <option value="3">3 - Regular</option>
+                <option value="4">4 - Bom</option>
+                <option value="5">5 - Excelente</option>
+            </select><br><br>
+
+            <label>Selecione o aplicativo:</label><br>
+            <label>
+                <input type="radio" name="app" value="Calculadora de Faltas" required>
+                <span style="display: inline-block; width: 15px; height: 15px; border-radius: 50%; background-color: #4CAF50;"></span>
+                Aplicativo: Calculadora de Faltas
+            </label><br>
+            <label>
+                <input type="radio" name="app" value="Aghamenon Toberlock Estudos" required>
+                <span style="display: inline-block; width: 15px; height: 15px; border-radius: 50%; background-color: #2196F3;"></span>
+                Site: Aghamenon Toberlock Estudos
+            </label><br><br>
+
+            <input type="submit" value="Enviar Feedback">
+        </form>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Calculadora de Faltas. Todos os direitos reservados.</p>
+    </footer>
+</body>
+</html>
